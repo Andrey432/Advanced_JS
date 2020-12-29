@@ -1,8 +1,14 @@
+/* Основной класс - List. Он реализует хранение и отображение данных. ProductsList и Cart реализуют обработку данных.
+*  ListItem - общий класс для представления данных, чтобы не приходилось из класса в класс делать распаковку/запаковку.
+*  Производные от ListItem классы переопределяют render.
+*/
+
+
 class List {
-    constructor (container, render= data => '') {
+    constructor (container, item_class) {
         this.container = container;
         this.items = new Map();
-        this.render_item = render;
+        this.item_class = item_class;
     }
 
     addItem(item) {
@@ -10,7 +16,7 @@ class List {
         if (this.items.has(id))
             this.items.get(id).quantity++;
         else
-            this.items.set(id, new ListItem(item));
+            this.items.set(id, new this.item_class(item));
     }
 
     delItem(item) {
@@ -23,14 +29,14 @@ class List {
     }
 
     renderSingle(item) {
-        document.querySelector(this.container).insertAdjacentHTML('beforeend',  this.render_item(item));
+        document.querySelector(this.container).insertAdjacentHTML('beforeend',  item.render());
     }
 
     render() {
         const block = document.querySelector(this.container);
         this.items.forEach((value) => {
             if (value.quantity > 0)
-                block.insertAdjacentHTML('beforeend',  this.render_item(value))
+                block.insertAdjacentHTML('beforeend',  value.render());
         });
     }
 }
@@ -43,16 +49,16 @@ class ListItem {
         this.price = data.price;
         this.quantity = initial_quantity;
     }
+
+    render() {
+        return ''
+    }
 }
 
 
 class ProductsList extends List {
     constructor(container='.products'){
-        super(container, data =>`<div class="item">
-                                    <p class="item__name">${data.title}</p>
-                                    <p class="item__price">${data.price}$</p>
-                                    <button class="item__buy-btn" item-id="${data.id}">Buy</button>
-                                </div>`);
+        super(container, ProductItem);
         this.cart = undefined;
 
         document.querySelector(this.container).addEventListener('click', event => {
@@ -77,7 +83,7 @@ class ProductsList extends List {
                         title: item_data.product_name,
                         price: item_data.price
                     };
-                    this.addItem(new ListItem(item_data));
+                    this.addItem(new ProductItem(item_data));
                 });
                 this.render();
             })
@@ -87,29 +93,23 @@ class ProductsList extends List {
     bindCart(cart) {
         this.cart = cart;
     }
+}
 
-    calcProductsPrice() {
-        return this.goods.reduce((a, b) => a + b.price, 0);
+
+class ProductItem extends ListItem {
+    render() {
+        return `<div class="item">
+                    <p class="item__name">${this.title}</p>
+                    <p class="item__price">${this.price}$</p>
+                    <button class="item__buy-btn" item-id="${this.id}">Buy</button>
+                </div>`;
     }
 }
 
 
 class Cart extends List {
     constructor (container='.cart__container') {
-        super(container, data => `<div class="cart-item" data-id="${data.id}">
-                                    <div class="product-bio">
-                                    <div class="product-desc">
-                                    <p class="product-title">${data.title}</p>
-                                    <p class="product-quantity">Quantity: ${data.quantity}</p>
-                                <p class="product-single-price">$${data.price} each</p>
-                                </div>
-                                </div>
-                                <div class="right-block">
-                                    <p class="product-price">$${data.quantity * data.price}</p>
-                                    <button class="del-btn" data-id="${data.id}">&times;</button>
-                                </div>
-                                </div>`)
-
+        super(container, CartItem);
         document.querySelector('.cart-btn').addEventListener('click', () => {
             document.querySelector(this.container).classList.toggle('invisible');
         });
@@ -156,6 +156,25 @@ class Cart extends List {
     selectItem() {}
     filter() {}
     makeOrder() {}
+}
+
+
+class CartItem extends ListItem {
+    render() {
+        return `<div class="cart-item" data-id="${this.id}">
+                    <div class="product-bio">
+                        <div class="product-desc">
+                            <p class="product-title">${this.title}</p>
+                            <p class="product-quantity">Quantity: ${this.quantity}</p>
+                            <p class="product-single-price">$${this.price} each</p>
+                        </div>
+                    </div>
+                    <div class="right-block">
+                        <p class="product-price">$${this.quantity * this.price}</p>
+                        <button class="del-btn" data-id="${this.id}">&times;</button>
+                    </div>
+                </div>`
+    }
 }
 
 
