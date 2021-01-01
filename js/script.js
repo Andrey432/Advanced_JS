@@ -76,7 +76,7 @@ class ListItem {
 class ProductsList extends List {
     constructor(container='.products'){
         super(container, ProductItem);
-        this.cart = NaN;
+        this.cart = null;
 
         document.querySelector(this.container).addEventListener('click', event => {
             if (event.target.classList.contains('item__buy-btn') && this.cart) {
