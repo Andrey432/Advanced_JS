@@ -48,11 +48,11 @@ class ListItem {
         this.title = data.title;
         this.price = data.price;
         this.quantity = initial_quantity;
-        this.visible = True
+        this.visible = true;
     }
 
     setVisible(state) {
-        this.visible = state
+        this.visible = state;
     }
 
     isRenderable() {
@@ -64,11 +64,11 @@ class ListItem {
     }
 
     decrement(dec=-1) {
-        this.quantity = max(0, this.quantity - 1);
+        this.quantity = Math.max(0, this.quantity - 1);
     }
 
     render() {
-        return ''
+        return '';
     }
 }
 
