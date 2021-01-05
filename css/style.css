@@ -33,12 +33,6 @@ button:focus{
 .btn-cart, .logo{
     align-self: center;
 }
-/*.products {*/
-/*display: flex;*/
-/*justify-content: space-between;*/
-/*flex-wrap: wrap;*/
-/*padding: 40px 80px;*/
-/*}*/
 .products{
     column-gap: 30px;
     display: grid;
@@ -120,8 +114,13 @@ img {
     margin-bottom: 20px;
 }
 .product-bio{
-    padding: 5px;
     display: flex;
+    flex-direction: column;
+}
+.product-title {
+    margin: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
 }
 .cart-item img{
     align-self: flex-start;
@@ -153,7 +152,7 @@ img {
     bottom: 5px;
     right: 0;
 }
-.search-form{
+.search-form {
     position: relative;
     margin-right: 50px;
     display: inline-block;
@@ -169,4 +168,10 @@ img {
     background-color: transparent;
     border: none;
     border-bottom: 2px solid #fafafa;
+}
+
+.stub-message {
+    font-size: 20px;
+    text-align: center;
+    font-weight: bold;
 }

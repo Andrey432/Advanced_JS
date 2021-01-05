@@ -37,8 +37,7 @@ const app = new Vue({
                     id_product: product.id_product,
                     product_name: product.product_name,
                     price: product.price,
-                    quantity: 1,
-                    position: this.cartList.length
+                    quantity: 1
                 });
             }
         },
@@ -50,7 +49,7 @@ const app = new Vue({
         deleteProductFromCart(product) {
             product.quantity--;
             if (product.quantity == 0) {
-                this.cartList.splice(product.position, 1);
+                this.cartList.splice(this.cartList.indexOf(product), 1);
             }
         },
         filterProducts() {
