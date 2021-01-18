@@ -14,31 +14,31 @@ class List {
     addItem(item) {
         let id = item.id;
         if (this.items.has(id))
-            this.items.get(id).quantity++;
+            this.items.get(id).increment();
         else
             this.items.set(id, new this.item_class(item));
     }
 
     delItem(item) {
-        let id = item.id;
-        if (this.items.has(id)) {
-            let product = this.items.get(id);
-            if (product.quantity > 0)
-                product.quantity--;
-        }
+        if (this.items.has(item.id))
+            this.items.get(item.id).decrement();
     }
 
     renderSingle(item) {
-        document.querySelector(this.container).insertAdjacentHTML('beforeend',  item.render());
+        if (item.isRenderable())
+            document.querySelector(this.container).insertAdjacentHTML('beforeend',  item.render());
     }
 
     render() {
         const block = document.querySelector(this.container);
         this.items.forEach((value) => {
-            if (value.quantity > 0)
+            if (value.isRenderable())
                 block.insertAdjacentHTML('beforeend',  value.render());
         });
     }
+
+    filter() {}
+    makeOrder() {}
 }
 
 
@@ -48,10 +48,27 @@ class ListItem {
         this.title = data.title;
         this.price = data.price;
         this.quantity = initial_quantity;
+        this.visible = true;
+    }
+
+    setVisible(state) {
+        this.visible = state;
+    }
+
+    isRenderable() {
+        return this.visible && this.quantity > 0;
+    }
+
+    increment(inc=1) {
+        this.quantity++;
+    }
+
+    decrement(dec=-1) {
+        this.quantity = Math.max(0, this.quantity - 1);
     }
 
     render() {
-        return ''
+        return '';
     }
 }
 
@@ -59,7 +76,7 @@ class ListItem {
 class ProductsList extends List {
     constructor(container='.products'){
         super(container, ProductItem);
-        this.cart = undefined;
+        this.cart = null;
 
         document.querySelector(this.container).addEventListener('click', event => {
             if (event.target.classList.contains('item__buy-btn') && this.cart) {
@@ -110,6 +127,7 @@ class ProductItem extends ListItem {
 class Cart extends List {
     constructor (container='.cart__container') {
         super(container, CartItem);
+
         document.querySelector('.cart-btn').addEventListener('click', () => {
             document.querySelector(this.container).classList.toggle('invisible');
         });
@@ -123,20 +141,22 @@ class Cart extends List {
 
     addItem(item) {
         super.addItem(item);
+
         item = this.items.get(item.id);
-        if (item.quantity == 1)
-            this.renderSingle(item);
-        else
+        if (item.quantity > 1)
             this._updateItem(item);
+        else
+            this.renderSingle(item);
     }
 
     delItem(item) {
         super.delItem(item);
+
         item = this.items.get(item.id);
-        if (item.quantity == 0)
-            this._deleteItem(item);
-        else
+        if (item.quantity > 0)
             this._updateItem(item);
+        else
+            this._deleteItem(item);    
     }
 
     _findItem(id) {
@@ -150,12 +170,10 @@ class Cart extends List {
     }
 
     _deleteItem(item) {
-        this._findItem(item.id).remove()
+        this._findItem(item.id).remove();
     }
 
     selectItem() {}
-    filter() {}
-    makeOrder() {}
 }
 
 
