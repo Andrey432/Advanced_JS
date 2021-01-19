@@ -3,78 +3,79 @@ const API = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-a
 const app = new Vue({
     el: '#app',
     data: {
+        showCart: false,
         catalogUrl: '/catalogData.json',
+        cartUrl: '/getBasket.json',
+        cartItems: [],
+        filtered: [],
+        imgCart: 'https://placehold.it/150',
         products: [],
-        filteredProducts: [],
-        cartList: [],
-        imgCatalog: 'https://placehold.it/200x150',
-        userSearch: '',
-        showCartBlock: false,
-        stubMessage: 'Товаров нет',
+        imgProduct: 'https://placehold.it/200x150'
     },
+
     methods: {
-        getJson(url) {
+        getJson(url){
             return fetch(url)
                 .then(result => result.json())
-                .catch(error => {
-                    console.log(error);
+                .catch(error => console.log(error))
+        },
+    
+        addProduct(item){
+            this.getJson(`${API}/addToBasket.json`)
+                .then(data => {
+                    if(data.result === 1){
+                       let find = this.cartItems.find(el => el.id_product === item.id_product);
+                       if(find){
+                           find.quantity++;
+                       } else {
+                           const prod = Object.assign({quantity: 1}, item);
+                           this.cartItems.push(prod)
+                       }
+                    }
                 })
         },
 
-        addProductToCart(product) {
-            let id = product.id_product;
-            let added = false;
-
-            this.cartList.forEach(element => {
-                if (element.id_product === id) {
-                    added = true;
-                    element.quantity++;
-                }
-            });
-
-            if (!added) {
-                this.cartList.push({
-                    id_product: product.id_product,
-                    product_name: product.product_name,
-                    price: product.price,
-                    quantity: 1
-                });
-            }
+        remove(item){
+            this.getJson(`${API}/addToBasket.json`)
+                .then(data => {
+                    if (data.result === 1) {
+                        if(item.quantity>1){
+                            item.quantity--;
+                        } else {
+                            this.cartItems.splice(this.cartItems.indexOf(item), 1);
+                        }
+                    }
+                    
+                })
         },
 
-        changeCartVisibility() {
-            this.showCartBlock = !this.showCartBlock;
-        },
-
-        deleteProductFromCart(product) {
-            product.quantity--;
-            if (product.quantity == 0) {
-                this.cartList.splice(this.cartList.indexOf(product), 1);
-            }
-        },
-        filterProducts() {
-            let regexp = new RegExp(this.userSearch, 'iu');
-            this.filteredProducts = this.products.filter(product => {
-                if (product.product_name.search(regexp) != -1)
-                    return true;
-            });
-        },
+        filter(string){
+            let regexp = new RegExp(string, 'i');
+            this.filtered = this.products.filter(el => regexp.test(el.product_name));
+        }
     },
 
     mounted(){
-       this.getJson(`${API + this.catalogUrl}`)
-           .then(data => {
-               for(let el of data){
-                   this.products.push(el);
-               }
-               this.filterProducts();
-           });
+        this.getJson(`${API + this.cartUrl}`)
+            .then(data => {
+                for (let item of data.contents){
+                    this.$data.cartItems.push(item);
+                }
+            });
+        this.getJson(`${API + this.catalogUrl}`)
+            .then(data => {
+                for (let item of data){
+                    this.$data.products.push(item);
+                    this.$data.filtered.push(item);
+                }
+            });
         this.getJson(`getProducts.json`)
             .then(data => {
-                for(let el of data){
-                    this.products.push(el);
+                for(let item of data){
+                    this.$data.products.push(item);
+                    this.$data.filtered.push(item);
                 }
-                this.filterProducts();
-            });
+            })
     }
-})
+
+});
