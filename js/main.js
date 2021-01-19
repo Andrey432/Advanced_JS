@@ -4,6 +4,7 @@ const app = new Vue({
     el: '#app',
     data: {
         showCart: false,
+        showError: false,
         catalogUrl: '/catalogData.json',
         cartUrl: '/getBasket.json',
         cartItems: [],
@@ -61,7 +62,13 @@ const app = new Vue({
                 for (let item of data.contents){
                     this.$data.cartItems.push(item);
                 }
-            });
+            })
+            .catch(
+                () => {
+                    console.log('error');
+                    this.showError = true;
+                }
+            );
         this.getJson(`${API + this.catalogUrl}`)
             .then(data => {
                 for (let item of data){
@@ -69,13 +76,6 @@ const app = new Vue({
                     this.$data.filtered.push(item);
                 }
             });
-        this.getJson(`getProducts.json`)
-            .then(data => {
-                for(let item of data){
-                    this.$data.products.push(item);
-                    this.$data.filtered.push(item);
-                }
-            })
     }
 
 });

@@ -19,7 +19,8 @@
             </div>
         </header>
         <main>
-            <products :products="filtered" :img="imgProduct" @add-product="addProduct"></products>
+            <load-error :show-error="showError"></load-error>
+            <products v-show="!showError" :products="filtered" :img="imgProduct" @add-product="addProduct"></products>
         </main>
     </div>
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
@@ -29,6 +30,7 @@
     <script src="js/ProductComponent.js"></script>
     <script src="js/CartComponent.js"></script>
     <script src="js/SearchComonent.js"></script>
+    <script src="js/LoadingErrorComponent.js"></script>
     <script src="js/main.js"></script>
 </body>
 
