@@ -11,12 +11,12 @@
   },
   {
     "id_product": 123,
-    "product_name": "Ноутбук",
+    "product_name": "Laptop",
     "price": 45600
   },
   {
     "id_product": 456,
-    "product_name": "Мышка",
+    "product_name": "Mouse",
     "price": 1000
   }
 ]
