@@ -13,52 +13,24 @@
         <header>
             <div class="logo">E-shop</div>
             <div class="cart">
-                <form action="#" class="search-form">
-                    <input type="text" class="search-field" v-model.lazy="userSearch">
-                    <button class="btn-search" type="submit" @click="filterProducts()">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </form>
-
-                <button class="btn-cart" type="button" @click="changeCartVisibility">Корзина</button>
-                <div v-if="showCartBlock" class="cart-block">
-                    <p v-if="cartList.length == 0" class="stub-message">{{ stubMessage }}</p>
-                    <div class="cart-item" v-for="product of cartList" :key="product.id_product">
-                        <div class="product-bio">
-                            <img :src="imgCatalog" alt="Product image">
-                            <div class="product-desc">
-                                <p class="product-title">{{ product.product_name }}</p>
-                                <p class="product-quantity">Quantity: {{ product.quantity }}</p>
-                                <p class="product-single-price">${{ product.price }} each</p>
-                            </div>
-                        </div>
-                        <div class="right-block">
-                            <p class="product-price">${{ product.quantity * product.price }}</p>
-                            <button class="del-btn" @click="deleteProductFromCart(product)">&times;</button>
-                        </div>
-                    </div>
-                </div>
-
+                <search @search="filter"></search>
+                <button class="btn-cart" type="button" @click="showCart = !showCart">Корзина</button>
+                <cart :cart-items="cartItems" :img="imgCart" :visibility="showCart" @remove="remove"></cart>
             </div>
         </header>
         <main>
-            <div class="products">
-                <p v-if="filteredProducts.length == 0" class="stub-message">{{ stubMessage }}</p>
-                <div class="product-item" v-for="product of filteredProducts" :key="product.id_product">
-                    <img :src="imgCatalog" alt="Some img">
-                    <div class="desc">
-                        <h3>{{ product.product_name }}</h3>
-                        <p>{{ product.price }} $</p>
-                        <button class="buy-btn" @click="addProductToCart(product)">Купить</button>
-                    </div>
-                </div>
-            </div>
+            <load-error :show-error="showError"></load-error>
+            <products v-show="!showError" :products="filtered" :img="imgProduct" @add-product="addProduct"></products>
         </main>
     </div>
     <script defer src="https://use.fontawesome.com/releases/v5.7.2/js/all.js"
         integrity="sha384-0pzryjIRos8mFBWMzSSZApWtPl/5++eIfzYmTgBBmXYdhvxPc+XcFEk+zJwDgWbP"
         crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="js/ProductComponent.js"></script>
+    <script src="js/CartComponent.js"></script>
+    <script src="js/SearchComonent.js"></script>
+    <script src="js/LoadingErrorComponent.js"></script>
     <script src="js/main.js"></script>
 </body>
 

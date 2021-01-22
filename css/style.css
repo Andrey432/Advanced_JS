@@ -76,6 +76,13 @@ img {
     width: 300px;
 }
 
+.error {
+    font-size: 24px;
+    font-weight: bold;
+    color: tomato;
+    margin: 32px;
+}
+
 .invisible{
     display: none;
 }
