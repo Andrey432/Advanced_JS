@@ -57,7 +57,7 @@ Vue.component('cart', {
             <button class="btn-cart" type="button" @click="showCart = !showCart">Корзина</button>
             <div class="cart-block" v-show="showCart">
                 <p v-show="empty">Корзина пуста</p>
-                <cart-item v-for="item of cartItems" :key="item.id_product" :img="imgCart" :cart-item="item" @remove="remove">
+                <cart-item v-for="item of cartItems" :key="item.id_product" :img="$parent.getImg(item)" :cart-item="item" @remove="remove">
                 </cart-item>
             </div>
         </div>
